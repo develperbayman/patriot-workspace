@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .chat-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        .message-container {
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+        }
+        .user-message {
+            background-color: #F5F5F5;
+            padding: 8px;
+            border-radius: 5px;
+            float: left;
+            clear: both;
+            max-width: 80%;
+        }
+        .bot-message {
+            background-color: #DCF8C6;
+            padding: 8px;
+            border-radius: 5px;
+            float: right;
+            clear: both;
+            max-width: 80%;
+        }
+        .audio-input {
+            display: block;
+            margin-top: 10px;
+        }
+        .audio-output {
+            display: block;
+            margin-top: 10px;
+            color: #777;
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <h1>Chat App</h1>
+        <div class="message-container">
+            <div class="user-message">
+                User: {{ user_input }}
+            </div>
+            <div class="bot-message">
+                Bot: {{ bot_response }}
+            </div>
+        </div>
+        <form action="/" method="POST">
+            <input type="text" name="user_input" placeholder="Type your message...">
+            <button type="submit">Send</button>
+            <audio class="audio-output" controls>
+                <source src="/static/audio.mp3" type="audio/mpeg">
+                Your browser does not support the audio element.
+            </audio>
+            <button class="audio-input" type="button" id="start-listening">Start Listening</button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('start-listening').addEventListener('click', () => {
+            if (!('webkitSpeechRecognition' in window)) {
+                alert('Speech recognition is not supported in this browser.');
+            } else {
+                const recognition = new webkitSpeechRecognition();
+                recognition.continuous = false;
+                recognition.lang = 'en-US';
+                recognition.onresult = (event) => {
+                    const user_input = event.results[0][0].transcript;
+                    document.querySelector('input[name="user_input"]').value = user_input;
+                };
+                recognition.onend = () => {
+                    recognition.stop();
+                };
+                recognition.start();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Facebook Messenger Style Chat</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+        }
+
+        .chat-container {
+            max-width: 600px;
+            margin: auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .message-box {
+            background-color: #f0f0f0;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+        .message {
+            background-color: #fff;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .message strong {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <h1>Facebook Messenger Style Chat</h1>
+        <div id="chat" class="message">
+            {% for message in chat_messages %}
+                <div class="message-box">
+                    <strong>{{ message.username }}</strong>: {{ message.message }}
+                </div>
+            {% endfor %}
+        </div>
+        <form id="message-form">
+            <input type="text" id="username" placeholder="Username" required>
+            <input type="text" id="message" placeholder="Message" required>
+            <button type="submit">Send</button>
+        </form>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $("#message-form").submit(function (event) {
+                event.preventDefault();
+                var username = $("#username").val();
+                var message = $("#message").val();
+
+                $.post("/send_message", { username: username, message: message }, function (data) {
+                    if (data.status === 'success') {
+                        $("#message").val('');
+                        $("#chat").append('<div class="message-box"><strong>' + username + '</strong>: ' + message + '</div>');
+                    } else {
+                        alert(data.message);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
